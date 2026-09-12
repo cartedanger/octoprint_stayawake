@@ -71,22 +71,12 @@ class StayAwakePlugin(
         next_timer = threading.Timer(interval, self._on_timer_tick)
         next_timer.daemon = True
 
-        old_timer = None
         with self._scheduler_lock:
             if not self._running:
                 return
 
-            old_timer = self._timer
             self._timer = next_timer
-
-        if old_timer is not None:
-            old_timer.cancel()
-
-        with self._scheduler_lock:
-            if not self._running or self._timer is not next_timer:
-                return
-
-        next_timer.start()
+            next_timer.start()
 
     def _should_send_in_mode(self, run_mode: str) -> bool:
         is_printing_or_paused = self._printer.is_printing() or self._printer.is_paused()
@@ -99,24 +89,37 @@ class StayAwakePlugin(
         # Default to idle mode for unknown values.
         return not is_printing_or_paused
 
-    def _send_command_now(self):
+    def _get_sendable_command(self, source: str):
         command = (self._settings.get(["command"]) or "").strip()
 
         if not command:
-            self._logger.debug("StayAwake send-now skipped: command is empty")
+            self._logger.debug("StayAwake %s skipped: command is empty", source)
             return False, "Command is empty"
 
         if self._printer is None or not self._printer.is_operational():
-            self._logger.debug("StayAwake send-now skipped: printer is not operational")
+            self._logger.debug("StayAwake %s skipped: printer is not operational", source)
             return False, "Printer is not operational"
 
+        return True, command
+
+    def _send_command(self, command: str, source: str, run_mode: str | None = None):
         self._printer.commands([command])
-        self._logger.debug("StayAwake send-now command '%s'", command)
+        if run_mode is None:
+            self._logger.debug("StayAwake %s command '%s'", source, command)
+        else:
+            self._logger.debug("StayAwake %s command '%s' in mode '%s'", source, command, run_mode)
+
+    def _send_command_now(self):
+        sendable, command_or_error = self._get_sendable_command("send-now")
+        if not sendable:
+            return False, command_or_error
+
+        self._send_command(command_or_error, source="send-now")
         return True, None
 
     def on_api_command(self, command, data):
         if command != "send_now":
-            return None
+            return jsonify(error="Unsupported command"), 400
 
         sent, error = self._send_command_now()
         if not sent:
@@ -127,26 +130,20 @@ class StayAwakePlugin(
     def _on_timer_tick(self):
         try:
             enabled = self._settings.get_boolean(["enabled"])
-            command = (self._settings.get(["command"]) or "").strip()
             run_mode = (self._settings.get(["run_mode"]) or "idle").strip().lower()
 
             if not enabled:
                 return
 
-            if not command:
-                self._logger.debug("StayAwake tick skipped: command is empty")
-                return
-
-            if self._printer is None or not self._printer.is_operational():
-                self._logger.debug("StayAwake tick skipped: printer is not operational")
+            sendable, command_or_error = self._get_sendable_command("tick")
+            if not sendable:
                 return
 
             if not self._should_send_in_mode(run_mode):
                 self._logger.debug("StayAwake tick skipped: run mode '%s' conditions not met", run_mode)
                 return
 
-            self._printer.commands([command])
-            self._logger.debug("StayAwake sent command '%s' in mode '%s'", command, run_mode)
+            self._send_command(command_or_error, source="tick", run_mode=run_mode)
         except Exception:
             self._logger.exception("StayAwake timer tick failed")
         finally:
