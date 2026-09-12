@@ -8,7 +8,8 @@ It is intended for keepalive-style use cases where you want regular firmware com
 
 - **Enabled** (`enabled`): turn periodic sending on or off.
 - **Command** (`command`): G-code to send (default: `M105`).
-- **Send now** button: sends the configured command immediately to verify it is accepted.
+- **Send now (test)** button: sends the configured command immediately to verify it is accepted
+  (it ignores enabled/run mode, but still requires an operational printer).
 - **Interval** (`interval`): send period in seconds (default: `30`, minimum `1`).
 - **Run mode** (`run_mode`): one of:
   - `idle`: send only when **not printing** and **not paused**.

@@ -18,6 +18,10 @@ $(function () {
           var message = "Unable to send command";
           if (xhr && xhr.responseJSON && xhr.responseJSON.error) {
             message = xhr.responseJSON.error;
+          } else if (xhr && xhr.responseText) {
+            message = xhr.responseText;
+          } else if (xhr && xhr.status) {
+            message = "Unable to send command (HTTP " + xhr.status + ")";
           }
 
           if (window.PNotify) {
