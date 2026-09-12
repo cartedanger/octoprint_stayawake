@@ -35,7 +35,8 @@ In OctoPrint:
 
 ### Option 2: Plugin Manager from local ZIP
 
-1. Download this repository as ZIP from GitHub.
+1. Download the tagged release/source archive ZIP from GitHub (for example `v0.1.0`):
+   - `https://github.com/cartedanger/octoprint_stayawake/archive/refs/tags/v0.1.0.zip`
 2. In OctoPrint, go to **Settings → Plugin Manager**.
 3. Click **... from file** and select the downloaded ZIP.
 4. Install and restart OctoPrint.
