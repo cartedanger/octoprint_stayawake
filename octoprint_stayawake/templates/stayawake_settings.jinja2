@@ -11,14 +11,17 @@
 <div class="control-group">
   <label class="control-label" for="settings-stayawake-command">G-code command</label>
   <div class="controls">
-    <input
-      id="settings-stayawake-command"
-      type="text"
-      class="input-xxlarge"
-      placeholder="M105"
-      data-bind="value: settings.plugins.stayawake.command"
-    />
-    <span class="help-inline">Example: M105</span>
+    <div class="input-append">
+      <input
+        id="settings-stayawake-command"
+        type="text"
+        class="input-xlarge"
+        placeholder="M105"
+        data-bind="value: settings.plugins.stayawake.command"
+      />
+      <button class="btn" type="button" data-bind="click: sendNowCommand">Send now</button>
+    </div>
+    <span class="help-inline">Example: M105 (use Send now to test the command immediately)</span>
   </div>
 </div>
 

@@ -1,3 +1,4 @@
 include README.md
 include LICENSE
 recursive-include octoprint_stayawake/templates *.jinja2
+recursive-include octoprint_stayawake/static *.js

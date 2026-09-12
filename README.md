@@ -8,6 +8,7 @@ It is intended for keepalive-style use cases where you want regular firmware com
 
 - **Enabled** (`enabled`): turn periodic sending on or off.
 - **Command** (`command`): G-code to send (default: `M105`).
+- **Send now** button: sends the configured command immediately to verify it is accepted.
 - **Interval** (`interval`): send period in seconds (default: `30`, minimum `1`).
 - **Run mode** (`run_mode`): one of:
   - `idle`: send only when **not printing** and **not paused**.
@@ -45,8 +46,9 @@ In OctoPrint:
 
 1. Enable the plugin.
 2. Set **Command** to `M105`.
-3. Set **Interval** to `30`.
-4. Select run mode (`idle`, `printing`, or `always`) based on your goal.
+3. Click **Send now** once to verify it appears in Terminal.
+4. Set **Interval** to `30`.
+5. Select run mode (`idle`, `printing`, or `always`) based on your goal.
 
 ## Safety note
 

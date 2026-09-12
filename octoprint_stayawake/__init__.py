@@ -4,6 +4,7 @@ from __future__ import annotations
 import threading
 
 import octoprint.plugin
+from flask import jsonify
 
 
 class StayAwakePlugin(
@@ -11,6 +12,8 @@ class StayAwakePlugin(
     octoprint.plugin.StartupPlugin,
     octoprint.plugin.ShutdownPlugin,
     octoprint.plugin.TemplatePlugin,
+    octoprint.plugin.AssetPlugin,
+    octoprint.plugin.SimpleApiPlugin,
 ):
     def __init__(self) -> None:
         self._timer: threading.Timer | None = None
@@ -26,7 +29,13 @@ class StayAwakePlugin(
         }
 
     def get_template_configs(self):
-        return [dict(type="settings", custom_bindings=False)]
+        return [dict(type="settings", custom_bindings=True)]
+
+    def get_assets(self):
+        return {"js": ["js/stayawake.js"]}
+
+    def get_api_commands(self):
+        return {"send_now": []}
 
     def on_after_startup(self):
         self._running = True
@@ -90,6 +99,31 @@ class StayAwakePlugin(
         # Default to idle mode for unknown values.
         return not is_printing_or_paused
 
+    def _send_command_now(self):
+        command = (self._settings.get(["command"]) or "").strip()
+
+        if not command:
+            self._logger.debug("StayAwake send-now skipped: command is empty")
+            return False, "Command is empty"
+
+        if self._printer is None or not self._printer.is_operational():
+            self._logger.debug("StayAwake send-now skipped: printer is not operational")
+            return False, "Printer is not operational"
+
+        self._printer.commands([command])
+        self._logger.debug("StayAwake send-now command '%s'", command)
+        return True, None
+
+    def on_api_command(self, command, data):
+        if command != "send_now":
+            return None
+
+        sent, error = self._send_command_now()
+        if not sent:
+            return jsonify(error=error), 400
+
+        return jsonify(ok=True)
+
     def _on_timer_tick(self):
         try:
             enabled = self._settings.get_boolean(["enabled"])
@@ -123,7 +157,3 @@ __plugin_name__ = "Stay Awake"
 __plugin_pythoncompat__ = ">=3.8,<4"
 __plugin_implementation__ = StayAwakePlugin()
 __plugin_hooks__ = {}
-
-
-def __plugin_load__():
-    return
