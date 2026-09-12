@@ -121,11 +121,9 @@ class StayAwakePlugin(
 
 __plugin_name__ = "Stay Awake"
 __plugin_pythoncompat__ = ">=3.8,<4"
+__plugin_implementation__ = StayAwakePlugin()
+__plugin_hooks__ = {}
 
 
 def __plugin_load__():
-    global __plugin_implementation__
-    __plugin_implementation__ = StayAwakePlugin()
-
-    global __plugin_hooks__
-    __plugin_hooks__ = {}
+    return
