@@ -62,16 +62,22 @@ class StayAwakePlugin(
         next_timer = threading.Timer(interval, self._on_timer_tick)
         next_timer.daemon = True
 
+        old_timer = None
         with self._scheduler_lock:
             if not self._running:
                 return
 
             old_timer = self._timer
-            if old_timer is not None:
-                old_timer.cancel()
-
             self._timer = next_timer
-            next_timer.start()
+
+        if old_timer is not None:
+            old_timer.cancel()
+
+        with self._scheduler_lock:
+            if not self._running or self._timer is not next_timer:
+                return
+
+        next_timer.start()
 
     def _should_send_in_mode(self, run_mode: str) -> bool:
         is_printing_or_paused = self._printer.is_printing() or self._printer.is_paused()
