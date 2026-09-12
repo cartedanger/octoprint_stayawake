@@ -39,12 +39,16 @@
 <div class="control-group">
   <label class="control-label" for="settings-stayawake-run-mode">Run mode</label>
   <div class="controls">
-    <select id="settings-stayawake-run-mode" data-bind="value: settings.plugins.stayawake.run_mode">
+    <select
+      id="settings-stayawake-run-mode"
+      aria-describedby="settings-stayawake-run-mode-help"
+      data-bind="value: settings.plugins.stayawake.run_mode"
+    >
       <option value="idle">idle</option>
       <option value="printing">printing</option>
       <option value="always">always</option>
     </select>
-    <p class="help-block">
+    <p id="settings-stayawake-run-mode-help" class="help-block">
       idle: send only when not printing and not paused.<br>
       printing: send only while printing or paused.<br>
       always: send whenever printer is operational.
