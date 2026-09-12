@@ -1,0 +1,53 @@
+<div class="control-group">
+  <label class="control-label">Enable Stay Awake</label>
+  <div class="controls">
+    <label class="checkbox">
+      <input type="checkbox" data-bind="checked: settings.plugins.stayawake.enabled">
+      Send command periodically based on run mode
+    </label>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="settings-stayawake-command">G-code command</label>
+  <div class="controls">
+    <input
+      id="settings-stayawake-command"
+      type="text"
+      class="input-xxlarge"
+      placeholder="M105"
+      data-bind="value: settings.plugins.stayawake.command"
+    />
+    <span class="help-inline">Example: M105</span>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="settings-stayawake-interval">Interval (seconds)</label>
+  <div class="controls">
+    <input
+      id="settings-stayawake-interval"
+      type="number"
+      min="1"
+      class="input-small"
+      data-bind="value: settings.plugins.stayawake.interval"
+    />
+    <span class="help-inline">Minimum 1 second. First send happens only after this delay.</span>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="settings-stayawake-run-mode">Run mode</label>
+  <div class="controls">
+    <select id="settings-stayawake-run-mode" data-bind="value: settings.plugins.stayawake.run_mode">
+      <option value="idle">idle</option>
+      <option value="printing">printing</option>
+      <option value="always">always</option>
+    </select>
+    <p class="help-block">
+      idle: send only when not printing and not paused.<br>
+      printing: send only while printing or paused.<br>
+      always: send whenever printer is operational.
+    </p>
+  </div>
+</div>
