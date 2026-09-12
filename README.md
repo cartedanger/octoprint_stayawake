@@ -29,8 +29,8 @@ It is intended for keepalive-style use cases where you want regular firmware com
 In OctoPrint:
 1. Go to **Settings → Plugin Manager**.
 2. Click **Get More...** and then **... from URL**.
-3. Use this repository URL (or a specific release/source archive URL):
-   - `https://github.com/cartedanger/octoprint_stayawake/archive/refs/heads/main.zip`
+3. Use a tagged release/source archive URL (recommended), for example:
+   - `https://github.com/cartedanger/octoprint_stayawake/archive/refs/tags/v0.1.0.zip`
 4. Install and restart OctoPrint.
 
 ### Option 2: Plugin Manager from local ZIP
